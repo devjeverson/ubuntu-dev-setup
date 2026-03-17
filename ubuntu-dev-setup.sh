@@ -1,9 +1,9 @@
 
 ---
 
-# ⚙️ Script completo (nível engenharia)
+# ⚙️ Script completo
 
-## 🧩 `install.sh`
+## 🧩 `ubuntu-dev-setup.sh`
 
 ```bash
 #!/bin/bash
