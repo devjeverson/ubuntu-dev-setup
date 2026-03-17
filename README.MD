@@ -1,190 +1,72 @@
+# ⚙️ Ubuntu Dev Environment Bootstrap
+
+Provisionamento automatizado de ambiente de desenvolvimento para Ubuntu, com foco em produtividade, padronização e onboarding rápido de desenvolvedores.
 
 ---
 
-# ⚙️ Script completo (Full Dev Environment Bootstrap (Ubuntu))
+## 🚀 Visão Geral
 
-## 🧩 `install.sh`
+Este projeto automatiza a configuração de um ambiente completo de desenvolvimento com apenas um script.
+
+Ideal para desenvolvedores que trabalham com múltiplas stacks (Java, Angular, Python) e querem evitar setups manuais demorados e inconsistentes.
+
+---
+
+## 🧠 Utilidade
+
+Configurar um ambiente de desenvolvimento do zero pode levar horas e gerar problemas como:
+
+- conflitos de versões
+- erros de configuração
+- inconsistência entre máquinas
+- perda de produtividade
+
+Este script resolve isso ao:
+
+- padronizar o ambiente
+- automatizar instalações
+- reduzir o tempo de setup para minutos
+- facilitar onboarding de novos desenvolvedores
+
+---
+
+## ✨ O que será instalado
+
+- ☕ Java (JDK 17)
+- 🌐 Node.js (via NVM)
+- 🅰️ Angular CLI
+- 🐍 Python 3 + pip + venv
+- 🐳 Docker
+- 🔀 Git
+- 💻 VS Code + extensões
+- 🧠 IntelliJ IDEA Community
+- 🐍 PyCharm Community
+- 🎨 ZSH + Oh My Zsh
+- 🔤 Fira Code (fontes)
+
+---
+
+## 📥 Como usar
+
+### 🔹 Opção 1: Clonar via GitHub
 
 ```bash
-#!/bin/bash
+git clone https://github.com/devjeverson/ubuntu-dev-setup.git
+cd ubuntu-dev-setup
+chmod +x ubuntu-dev-setup.sh
+./ubuntu-dev-setup.sh
 
-set -e
+### 🔹 Opção 2: Download ZIP
 
-LOG_FILE="setup.log"
+1. Acesse o repositório:  
+   https://github.com/devjeverson/ubuntu-dev-setup
 
-exec > >(tee -i $LOG_FILE)
-exec 2>&1
+2. Clique em **Code → Download ZIP**
 
-echo "🚀 Iniciando setup FULL DEV..."
+3. Extraia o arquivo baixado e acesse a pasta:
 
-# -------------------------------
-# Funções utilitárias
-# -------------------------------
+```bash
+cd ubuntu-dev-setup
+chmod +x ubuntu-dev-setup.sh
+./ubuntu-dev-setup.sh
 
-command_exists() {
-  command -v "$1" >/dev/null 2>&1
-}
-
-ask_install() {
-  read -p "Instalar $1? (y/n): " choice
-  case "$choice" in
-    y|Y ) return 0 ;;
-    * ) return 1 ;;
-  esac
-}
-
-# -------------------------------
-# Atualização do sistema
-# -------------------------------
-
-echo "🔄 Atualizando sistema..."
-sudo apt update && sudo apt upgrade -y
-
-# -------------------------------
-# Git
-# -------------------------------
-
-if ask_install "Git"; then
-  if command_exists git; then
-    echo "✔ Git já instalado"
-  else
-    sudo apt install -y git
-    read -p "Nome do Git: " git_name
-    read -p "Email do Git: " git_email
-    git config --global user.name "$git_name"
-    git config --global user.email "$git_email"
-  fi
-fi
-
-# -------------------------------
-# Docker
-# -------------------------------
-
-if ask_install "Docker"; then
-  if command_exists docker; then
-    echo "✔ Docker já instalado"
-  else
-    sudo apt install -y docker.io
-    sudo systemctl enable docker
-    sudo systemctl start docker
-    sudo usermod -aG docker $USER
-  fi
-fi
-
-# -------------------------------
-# Node + NVM
-# -------------------------------
-
-if ask_install "Node.js (via NVM)"; then
-  if command_exists node; then
-    echo "✔ Node já instalado"
-  else
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    source "$NVM_DIR/nvm.sh"
-    nvm install --lts
-    nvm use --lts
-  fi
-fi
-
-# -------------------------------
-# Angular CLI
-# -------------------------------
-
-if ask_install "Angular CLI"; then
-  if command_exists ng; then
-    echo "✔ Angular CLI já instalado"
-  else
-    npm install -g @angular/cli
-  fi
-fi
-
-# -------------------------------
-# Java
-# -------------------------------
-
-if ask_install "Java (JDK 17)"; then
-  if command_exists java; then
-    echo "✔ Java já instalado"
-  else
-    sudo apt install -y openjdk-17-jdk
-  fi
-fi
-
-# -------------------------------
-# Python
-# -------------------------------
-
-if ask_install "Python"; then
-  if command_exists python3; then
-    echo "✔ Python já instalado"
-  else
-    sudo apt install -y python3 python3-pip python3-venv
-    python3 -m pip install --upgrade pip
-  fi
-fi
-
-# -------------------------------
-# VS Code
-# -------------------------------
-
-if ask_install "VS Code"; then
-  if command_exists code; then
-    echo "✔ VS Code já instalado"
-  else
-    sudo snap install code --classic
-  fi
-
-  echo "📦 Instalando extensões..."
-  code --install-extension esbenp.prettier-vscode
-  code --install-extension dbaeumer.vscode-eslint
-  code --install-extension angular.ng-template
-  code --install-extension eamodio.gitlens
-fi
-
-# -------------------------------
-# JetBrains IDEs
-# -------------------------------
-
-if ask_install "IntelliJ IDEA"; then
-  sudo snap install intellij-idea-community --classic || echo "Já instalado"
-fi
-
-if ask_install "PyCharm"; then
-  sudo snap install pycharm-community --classic || echo "Já instalado"
-fi
-
-# -------------------------------
-# ZSH + Oh My Zsh
-# -------------------------------
-
-if ask_install "ZSH + Oh My Zsh"; then
-  if command_exists zsh; then
-    echo "✔ ZSH já instalado"
-  else
-    sudo apt install -y zsh
-  fi
-
-  if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  fi
-
-  chsh -s $(which zsh)
-fi
-
-# -------------------------------
-# Fontes
-# -------------------------------
-
-if ask_install "Fira Code Fonts"; then
-  sudo apt install -y fonts-firacode
-fi
-
-# -------------------------------
-# Finalização
-# -------------------------------
-
-echo ""
-echo "🎉 Setup finalizado!"
-echo "📄 Log salvo em: $LOG_FILE"
-echo "⚠ Reinicie o terminal para aplicar todas as mudanças."
